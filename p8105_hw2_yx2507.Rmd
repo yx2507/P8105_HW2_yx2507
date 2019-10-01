@@ -1,0 +1,36 @@
+---
+title: "p8105_hw2_yx2507"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+```
+
+# problem 1  
+```{r}
+trash_data = read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx") %>%
+  janitor::clean_names() %>%
+  drop_na(dumpster) %>%
+mutate(sports_ball=round(sports_balls,digits = 0))
+
+## check
+view(trash_data)
+
+```
+
+clean sheet for precipitaiton
+```{r}
+
+data_rain_2018 = 
+    read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = '2018 Precipitation', range = "A2:B15") %>% 
+    janitor::clean_names() %>% 
+    filter(total != "NA") %>% 
+    mutate(year = 2018)
+
+```
+
+   
+   

@@ -38,5 +38,13 @@ data_rain_2017=
 
 ```
 
+combine and get a`month.name` variable
+```{r}
+data_raintot = bind_rows(data_rain_2017, data_rain_2018) %>% 
+    mutate(month = month.name[month]) %>% 
+    select(year, month, total)
+
+```
+
    
    

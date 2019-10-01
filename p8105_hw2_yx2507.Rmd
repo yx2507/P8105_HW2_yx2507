@@ -30,6 +30,12 @@ data_rain_2018 =
     filter(total != "NA") %>% 
     mutate(year = 2018)
 
+data_rain_2017=
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = '2017 Precipitation', range = "A2:B15") %>% 
+    janitor::clean_names() %>% 
+    filter(total != "NA") %>% 
+    mutate(year = 2017)
+
 ```
 
    

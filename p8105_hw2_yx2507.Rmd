@@ -47,5 +47,21 @@ data_raintot = bind_rows(data_rain_2017, data_rain_2018) %>%
 ```
 
 In trash_data, there are `r nrow(trash_data)` rows and `r ncol(trash_data)`columns with variables related to trash like plastic bottles. 
-In precipitation data `data_rain`, there are `r nrow(data_raintot)` rows and `r ncol(data_raintot)`columns. Vraibles are month and the precipitation amount as "totoal"
+In precipitation data `data_rain`, there are `r nrow(data_raintot)` rows and `r ncol(data_raintot)`columns. Vraibles are month and the precipitation 
+amount as "totoal"
    
+   
+# problem 2
+import data month-pol
+```{r}
+data_pol =
+  read_csv(file= "data/pols-month.csv")%>%
+  janitor::clean_names()%>%
+  separate(mon, into = c("day", "month", "year"), sep = "-") %>%
+   select(-day, -prez_gop, - prez_dem)
+
+```
+
+Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
+
+

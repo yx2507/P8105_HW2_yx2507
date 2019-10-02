@@ -71,4 +71,14 @@ data_snp=read_csv(file = "data/snp.csv")%>%
 
 ```
 
+import and tidy unemployment
+```{r}
+data_unemploy = read_csv(file="data/unemployment.csv")%>%
+  janitor::clean_names()%>%
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "value")
+  
+```
 

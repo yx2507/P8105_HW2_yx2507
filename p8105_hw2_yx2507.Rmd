@@ -13,7 +13,7 @@ library(readxl)
 ```{r}
 trash_data = read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx") %>%
   janitor::clean_names() %>%
-  drop_na(dumpster) %>%
+  filter(dumpster != "NA") %>%
 mutate(sports_balls = as.integer(sports_balls))
 
 ## check
@@ -48,8 +48,8 @@ data_raintot = bind_rows(data_rain_2017, data_rain_2018) %>%
 
 In trash_data, there are `r nrow(trash_data)` rows and `r ncol(trash_data)`columns with variables related to trash like plastic bottles. 
 In precipitation data `data_rain`, there are `r nrow(data_raintot)` rows and `r ncol(data_raintot)`columns. Vraibles are month and the precipitation 
-amount as "totoal"
-   
+amount as "totoal" median are`r median(pull(trash_data%>% filter(year == 2017), sports_balls))`
+    
    
 # problem 2
 import data month-pol
@@ -80,5 +80,9 @@ data_unemploy = read_csv(file="data/unemployment.csv")%>%
     names_to = "month",
     values_to = "value")
   
+```
+merge and combine dataset
+```{r}
+data_combine= left_join(data_pol, data_snp, by ="month")
 ```
 

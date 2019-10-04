@@ -7,6 +7,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(readxl)
+library(dplyr)
 ```
 
 # problem 1  
@@ -84,5 +85,37 @@ data_unemploy = read_csv(file="data/unemployment.csv")%>%
 merge and combine dataset
 ```{r}
 data_combine= left_join(data_pol, data_snp, by ="month")
+data_tot=left_join(data_combine,data_unemploy, by = "month")
+```
+
+problem 3
+```{r}
+data_baby=read_csv(file="data/Popular_Baby_Names.csv") %>%
+  janitor::clean_names() %>%
+  mutate(ethnicity = recode(ethnicity, "ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER", "BLACK NON HISP"= "BLACK NON HISPANIC","WHITE NON HISP" = "WHITE NON HISPANIC"))%>%
+  mutate(childs_first_name = str_to_lower(childs_first_name)) %>%
+  distinct()
+  
+```
+
+creat a reader friendly table
+```{r}
+data_baby%>% filter(childs_first_name == "olivia",gender == "FEMALE") %>% select(childs_first_name, year_of_birth,ethnicity, rank) %>%
+  pivot_wider(names_from = "year_of_birth",
+              values_from = "rank") %>% knitr::kable()
+## for male popular name
+data_baby%>% filter(gender == "MALE",rank == 1) %>% select(childs_first_name, year_of_birth,ethnicity) %>% pivot_wider(names_from = "year_of_birth",
+              values_from = "childs_first_name") %>% knitr::kable()
+```
+
+creat a scatterplot
+```{r}
+library(ggridges)
+plot_df = filter(data_baby, ethnicity == "WHITE NON HISPANIC", gender == "MALE", year_of_birth == 2016)
+ggplot(plot_df, aes(x = rank, y = count)) + geom_point() +
+  labs(
+    title = "The first name of white non-hispanic male children born in 2016",
+    x = "The rank in popularity of that name",
+    y = "The number of children with a name (count)")
 ```
 

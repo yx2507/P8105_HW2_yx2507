@@ -64,7 +64,9 @@ amount as "totoal" median are`r median(pull(trash_data%>% filter(year == 2017), 
 data_pol =
   read_csv(file= "data/pols-month.csv")%>%
   janitor::clean_names()%>%
-  separate(mon, into = c("day", "month", "year"), sep = "-") %>%
+  separate(mon, into = c("year","month","day"), sep = "-", convert = TRUE) %>%
+  mutate(month = month.abb[month]) %>%
+   mutate(president = ifelse(prez_gop > 0, "gop","dem")) %>%
    select(-day, -prez_gop, - prez_dem)
 
 ```
@@ -72,8 +74,10 @@ data_pol =
 2.2 Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
 ```{r}
 data_snp=read_csv(file = "data/snp.csv")%>%
-  janitor::clean_names()%>%
-  separate(date, into = c("month", "day", "year"), sep = "/")%>%
+  
+  separate("date", into = c("day","month","year"), sep = "/", convert = TRUE)%>%
+   arrange(year, month)%>%
+  mutate(month = month.abb[month])%>%
   select(year, month, -day, everything())
 
 ```
@@ -81,17 +85,19 @@ data_snp=read_csv(file = "data/snp.csv")%>%
 2.3 import and tidy unemployment
 ```{r}
 data_unemploy = read_csv(file="data/unemployment.csv")%>%
-  janitor::clean_names()%>%
-  pivot_longer(
-    jan:dec,
-    names_to = "month",
-    values_to = "unemployment_value")
+ pivot_longer(
+             Jan:Dec,
+             names_to = "month",
+             values_to = "employment_value"
+) %>% select(year = Year, everything())
+
+ 
   
 ```
 2.4 Join the datasets by merging snp into pols, and merging unemployment into the result.
 ```{r}
-data_combine= left_join(data_pol, data_snp, by ="month")
-data_tot=left_join(data_combine,data_unemploy, by = "month")
+data_combine= left_join(data_pol, data_snp, by = c("month","year"))
+data_tot=left_join(data_combine,data_unemploy, by = c("month", "year"))
 ```
 For dataset data_pol, there are`r nrow(data_pol)` rows and `r ncol(data_pol)` columns. 
 Key vairables are time variables including `month` and `year`
@@ -111,6 +117,18 @@ For dataset data_unemploy, there are `r nrow(data_unemploy)` and `r ncol(data_un
 Key variables are:
 unemployment_value: the percentage of unemployment of the associated month and year.
 
+For the resulting dataset, there are `r nrow(data_tot)` rows and `r ncol(data_tot)` columns. the range of year is from `r min(pull(data_tot, year))` to `r max(pull(data_tot, year))`
+key variables are 
+gov_gop: the number of republican governors on the associated date
+sen_gop: the number of republican senators on the associated date
+rep_gop: the number of republican representatives on the associated date
+gov_dem: the number of democratic governors on the associated date
+sen_dem: the number of democratic senators on the associated date
+rep_dem: the number of democratic representatives on the associated date
+date: the date of the observation
+close: the closing values of the S&P stock index on the associated date
+unemployment_value: the percentage of unemployment of the associated month an
+which is a combine by the above three dataset by month and year.
 
 # Problem 3
 ```{r}
